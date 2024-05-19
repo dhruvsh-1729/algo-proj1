@@ -1,0 +1,49 @@
+1. Input=> source, dest , date
+
+2. finding the zones of act_src and act_dest
+	all imp stations in src_zn
+	all imp stations in dst_zn 
+
+3. for(this_date in {date,date+1})
+	for(start: all imp stations in src_zn)
+		for(end : all imp stations in dest_zn)
+			list all_trains = getTrainOn( start,end,this_date)
+
+
+4. 
+	list[3 trains] final_answer
+
+	for(long_train:all_trains)
+		list[3_trains] this_train_ans
+
+		//for source
+
+		start_this_train = this_train.src
+		list src_train_list={}
+
+		src_train_list.append = getTrainOn(act_src, start_this_train,date)
+		src_train_list.append = getTrainOn(act_src, start_this_train,date+1)
+
+		for (src_train in src_train_list)
+			check iscompatible(src_train, long_train )
+				ans.append(src_train + long_train)
+
+
+		//for destination
+
+		end_this_train = this_train.dest
+		list dest_train_list={}
+		dest_train_list.append = getTrainOn(end_this_train, act_dest, date+this_train.journey)
+		dest_train_list.append = getTrainOn(end_this_train, act_dest, date+this_train.journey+1)
+
+		for(dest_train in dest_train_list)
+			check iscompatible(long_train, dest_train )
+				for(options : ans)
+					options+=dest_train
+
+	final_answer.extend(this_train_ans)
+
+
+
+5. isCompatible(train1,train1_end , train2, train2_start):
+		return train1.train1_end.time < train2.train2_start.time
