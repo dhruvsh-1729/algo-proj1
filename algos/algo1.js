@@ -1,6 +1,129 @@
 import { Router } from "express";
 import axios from 'axios';
 
+const stations = [
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "New Delhi", "station_code": "NDLS" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Delhi Junction", "station_code": "DLI" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Amritsar", "station_code": "ASR" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Lucknow Charbagh", "station_code": "LKO" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Varanasi", "station_code": "BSB" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Dehradun", "station_code": "DDN" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Chandigarh", "station_code": "CDG" },
+    { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Jammu Tawi", "station_code": "JAT" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Mumbai Central", "station_code": "BCT" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Bandra Terminus", "station_code": "BDTS" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Surat", "station_code": "ST" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Ahmedabad", "station_code": "ADI" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Vadodara", "station_code": "BRC" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Ratlam", "station_code": "RTM" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Udaipur City", "station_code": "UDZ" },
+    { "zone_name": "Western Railway", "zone": "WR", "station_name": "Rajkot", "station_code": "RJT" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Chennai Central", "station_code": "MAS" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Chennai Egmore", "station_code": "MS" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Madurai", "station_code": "MDU" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Coimbatore", "station_code": "CBE" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Tiruchirappalli", "station_code": "TPJ" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Thiruvananthapuram Central", "station_code": "TVC" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Salem", "station_code": "SA" },
+    { "zone_name": "Southern Railway", "zone": "SR", "station_name": "Mangalore Central", "station_code": "MAQ" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Howrah", "station_code": "HWH" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Sealdah", "station_code": "SDAH" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Asansol", "station_code": "ASN" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Dhanbad", "station_code": "DHN" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Malda Town", "station_code": "MLDT" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Bhagalpur", "station_code": "BGP" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Kolkata", "station_code": "KOAA" },
+    { "zone_name": "Eastern Railway", "zone": "ER", "station_name": "Barddhaman", "station_code": "BWN" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Chhatrapati Shivaji Maharaj Terminus", "station_code": "CSMT" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Dadar", "station_code": "DR" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Pune", "station_code": "PUNE" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Nagpur", "station_code": "NGP" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Solapur", "station_code": "SUR" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Bhusaval", "station_code": "BSL" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Nashik Road", "station_code": "NK" },
+    { "zone_name": "Central Railway", "zone": "CR", "station_name": "Shirdi", "station_code": "SNSI" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Secunderabad", "station_code": "SC" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Hyderabad", "station_code": "HYB" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Vijayawada", "station_code": "BZA" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Guntur", "station_code": "GNT" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Tirupati", "station_code": "TPTY" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Warangal", "station_code": "WL" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Nanded", "station_code": "NED" },
+    { "zone_name": "South Central Railway", "zone": "SCR", "station_name": "Kazipet", "station_code": "KZJ" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Gorakhpur", "station_code": "GKP" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Lucknow Junction", "station_code": "LJN" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Varanasi City", "station_code": "BCY" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Chhapra", "station_code": "CPR" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Basti", "station_code": "BST" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Gonda", "station_code": "GD" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Bhatni", "station_code": "BTT" },
+    { "zone_name": "North Eastern Railway", "zone": "NER", "station_name": "Ballia", "station_code": "BUI" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Bengaluru City", "station_code": "SBC" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Hubli", "station_code": "UBL" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Mysuru", "station_code": "MYS" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Belagavi", "station_code": "BGM" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Davangere", "station_code": "DVG" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Ballari", "station_code": "BAY" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Vijayapura", "station_code": "BJP" },
+    { "zone_name": "South Western Railway", "zone": "SWR", "station_name": "Hosapete", "station_code": "HPT" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Allahabad", "station_code": "PRYJ" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Kanpur Central", "station_code": "CNB" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Agra Cantt", "station_code": "AGC" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Jhansi", "station_code": "JHS" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Gwalior", "station_code": "GWL" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Tundla", "station_code": "TDL" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Aligarh", "station_code": "ALJN" },
+    { "zone_name": "North Central Railway", "zone": "NCR", "station_name": "Etawah", "station_code": "ETW" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Jaipur", "station_code": "JP" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Jodhpur", "station_code": "JU" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Bikaner", "station_code": "BKN" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Ajmer", "station_code": "AII" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Udaipur City", "station_code": "UDZ" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Kota", "station_code": "KOTA" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Alwar", "station_code": "AWR" },
+    { "zone_name": "North Western Railway", "zone": "NWR", "station_name": "Sikar", "station_code": "SIKR" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Bilaspur", "station_code": "BSP" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Raipur", "station_code": "R" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Nagpur", "station_code": "NGP" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Gondia", "station_code": "G" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Durg", "station_code": "DURG" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Bhilai", "station_code": "BIA" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Bhatapara", "station_code": "BYT" },
+    { "zone_name": "South East Central Railway", "zone": "SECR", "station_name": "Anuppur", "station_code": "APR" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Guwahati", "station_code": "GHY" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Dibrugarh", "station_code": "DBRG" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "New Jalpaiguri", "station_code": "NJP" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Siliguri", "station_code": "SGUJ" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Lumding", "station_code": "LMG" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Tinsukia", "station_code": "TSK" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Katihar", "station_code": "KIR" },
+    { "zone_name": "North East Frontier Railway", "zone": "NFR", "station_name": "Bongaigaon", "station_code": "BNGN" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Kolkata Shalimar", "station_code": "SHM" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Kolkata Santragachi", "station_code": "SRC" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Kharagpur", "station_code": "KGP" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Tatanagar", "station_code": "TATA" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Ranchi", "station_code": "RNC" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Digha", "station_code": "DGHA" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Balasore", "station_code": "BLS" },
+    { "zone_name": "South Eastern Railway", "zone": "SER", "station_name": "Rourkela", "station_code": "ROU" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Patna", "station_code": "PNBE" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Muzaffarpur", "station_code": "MFP" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Gaya", "station_code": "GAYA" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Hajipur", "station_code": "HJP" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Dhanbad", "station_code": "DHN" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Samastipur", "station_code": "SPJ" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Darbhanga", "station_code": "DBG" },
+    { "zone_name": "East Central Railway", "zone": "ECR", "station_name": "Barauni", "station_code": "BJU" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Bhubaneswar", "station_code": "BBS" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Puri", "station_code": "PURI" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Visakhapatnam", "station_code": "VSKP" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Sambalpur", "station_code":"SBP" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Khurda Road", "station_code": "KUR" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Cuttack", "station_code": "CTC" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Berhampur", "station_code": "BAM" },
+    { "zone_name": "East Coast Railway", "zone": "ECoR", "station_name": "Rayagada", "station_code": "RGDA" }
+  ]
+
 const router = new Router();
 
 const baseUrl = 'http://localhost:8000/trains/';
@@ -11,7 +134,6 @@ const zones = [
 
 
 //Got the zones of the source and destination stations properly
-
 
 router.get("/getZones", async (req, res) => {
     const src = req.query.src;
@@ -57,5 +179,45 @@ router.get("/getZones", async (req, res) => {
 
    res.status(200).send({data:{srcTrueZone,destTrueZone}})
 });
+
+
+// To get all the stations from the source zone and the destination zone
+// and then get all the trains from the stations O(N*M)
+
+router.get('/getLongTrains', async (req,res)=>{
+    const src = req.query.src;
+    const dest = req.query.dest;
+    const date = req.query.date;
+
+    const response = await axios.get(`http://localhost:8000/algo1/getZones?src=${src}&dest=${dest}`);
+    const {srcTrueZone, destTrueZone} = response.data.data;
+
+    const srcImpStations = stations.filter(station => station.zone === srcTrueZone);
+    const destImpStations = stations.filter(station => station.zone === destTrueZone);
+
+    console.log(srcImpStations, destImpStations);
+
+    let allTrains = [];
+
+    const directTrainsAvailable = await axios.get(baseUrl+`getTrainOn?from=${src}&to=${dest}&date=${date}`);
+    const directTrains = directTrainsAvailable.data.data;
+
+    console.log(directTrains);
+
+    allTrains = [...directTrains];
+
+    for(const srcStn of srcImpStations) {
+        for(const destStn of destImpStations) {
+            if(srcStn.station_code !== destStn.station_code){
+            const trainsAvailable = await axios.get(baseUrl+`getTrainOn?from=${srcStn.station_code}&to=${destStn.station_code}&date=${date}`);
+            const trains = trainsAvailable.data.data;
+            allTrains = [...trains,...allTrains];
+            }
+        }
+    }
+
+    res.status(200).send({data:allTrains})
+})
+
 
 export default router;
