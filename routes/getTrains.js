@@ -6,7 +6,6 @@ import * as cheerio from 'cheerio';
 const prettify = new Prettify();
 const router = Router();
 
-
 router.get("/getTrain", async (req, resp) => {
   const trainNo = req.query.trainNo;
   const URL_Train = `https://erail.in/rail/getTrains.aspx?TrainNo=${trainNo}&DataSource=0&Language=0&Cache=true`;
@@ -131,8 +130,6 @@ router.get("/pnrstatus",async(req,resp)=>{
   } catch (error) {
     console.log(error)
   }
-
 })
-
 
 export default router;
