@@ -1,6 +1,7 @@
 import { Router } from "express";
 import axios from 'axios';
 
+// static data of stations
 const stations = [
     { "zone_name": "Northern Railway", "zone": "NR", "station_name": "New Delhi", "station_code": "NDLS" },
     { "zone_name": "Northern Railway", "zone": "NR", "station_name": "Delhi Junction", "station_code": "DLI" },
